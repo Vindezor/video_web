@@ -1,0 +1,31 @@
+<!-- <form [formGroup]="videoForm" action="">
+    <input accept="video/mp4" (change)="capturarImagen($event)" #video required id="videos" multiple type="file" formControlName="video">
+    <button (click)="test()">a</button>
+</form> -->
+
+<div id="containa" class="container">
+    <video id="videoPlayer" [src]="urlVideo"></video>
+    <div class="controls">
+        <button *ngIf="playing === false" (click)="playVideo()"><mat-icon>play_circle</mat-icon></button>
+        <button *ngIf="playing === true" (click)="playVideo()"><mat-icon>pause_circle</mat-icon></button>
+        <button><i class="fa fa-fast-backward"></i></button>
+        <div id="timeline"
+        (click)="clickBar($event)"
+        (mousemove)="mousemoveBar($event)"
+        (mouseleave)="mouseleaveBar($event)"
+        class="timeline">
+            <div class="bar">
+                <div id="barra" class="inner"></div>
+            </div>
+        </div>
+        <button mat-button [matMenuTriggerFor]="menu"><mat-icon>settings</mat-icon></button>
+        <mat-menu #menu="matMenu">
+            <button (click)="changeQuality('360')" mat-menu-item>360p</button>
+            <button (click)="changeQuality('480')" mat-menu-item>480p</button>
+            <button (click)="changeQuality('720')" mat-menu-item>720p</button>
+            <button (click)="changeQuality('1080')" mat-menu-item>1080p</button>
+            <button (click)="changeQuality('2160')" mat-menu-item>4K</button>
+        </mat-menu>
+        <button (click)="fullScreen()"><mat-icon>fullscreen</mat-icon></button>
+    </div>
+</div>
