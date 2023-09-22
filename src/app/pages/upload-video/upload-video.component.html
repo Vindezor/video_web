@@ -8,6 +8,7 @@
     <div class="controls">
         <button *ngIf="playing === false" (click)="playVideo()"><mat-icon>play_circle</mat-icon></button>
         <button *ngIf="playing === true" (click)="playVideo()"><mat-icon>pause_circle</mat-icon></button>
+        <div style="color: white; display: flex; align-items: center;">{{ currentTime }} / {{ endTime }}</div>
         <button><i class="fa fa-fast-backward"></i></button>
         <div id="timeline"
         (click)="clickBar($event)"

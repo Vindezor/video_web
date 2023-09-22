@@ -8,6 +8,9 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./upload-video.component.scss']
 })
 export class UploadVideoComponent implements OnInit {
+
+  currentTime: string = "0:00";
+  endTime: string = "0:00";
   movingBar: boolean = false;
   playing: boolean = false;
   fullscreen: boolean = false;
@@ -24,6 +27,12 @@ export class UploadVideoComponent implements OnInit {
   ngOnInit(): void {
     let videoPlayer: HTMLVideoElement = document.getElementById('videoPlayer') as HTMLVideoElement;
     videoPlayer.addEventListener("timeupdate", () => {
+      if(videoPlayer.currentTime !== 0){
+        this.currentTime = this.secondsToMinutes(videoPlayer.currentTime);
+      }
+      if(!Number.isNaN(videoPlayer.duration)){
+        this.endTime = this.secondsToMinutes(videoPlayer.duration);
+      }
       let curr = (videoPlayer.currentTime / videoPlayer.duration) * 100;
       // if(video.ended){
       //     document.querySelector(".fa-play").style.display = "block"
@@ -79,7 +88,7 @@ export class UploadVideoComponent implements OnInit {
     });
    }
 
-   extraerBase64 = async ($event: any) =>
+  extraerBase64 = async ($event: any) =>
     new Promise((resolve, reject) => {
       try {
         const unsafeImg = window.URL.createObjectURL($event);
@@ -99,28 +108,37 @@ export class UploadVideoComponent implements OnInit {
       } catch (e) {
         console.log(e);
       }
-    });
-
-    playVideo(){
-      let videoPlayer: HTMLVideoElement = document.getElementById('videoPlayer') as HTMLVideoElement;
-      if(videoPlayer.paused){
-        this.playing = true;
-        videoPlayer.play();
-      } else {
-        this.playing = false;
-        videoPlayer.pause();
-      }
     }
+  );
 
-    fullScreen(){
-      let containa: HTMLElement = document.getElementById('containa') as HTMLElement;
-      if(this.fullscreen){
-        this.fullscreen = false;
-        document.exitFullscreen();
-      } else {
-        this.fullscreen = true;
-        containa.requestFullscreen();
-      }
+  playVideo(){
+    let videoPlayer: HTMLVideoElement = document.getElementById('videoPlayer') as HTMLVideoElement;
+    if(videoPlayer.paused){
+      this.playing = true;
+      videoPlayer.play();
+    } else {
+      this.playing = false;
+      videoPlayer.pause();
     }
+  }
 
+  fullScreen(){
+    let containa: HTMLElement = document.getElementById('containa') as HTMLElement;
+    if(this.fullscreen){
+      this.fullscreen = false;
+      document.exitFullscreen();
+    } else {
+      this.fullscreen = true;
+      containa.requestFullscreen();
+    }
+  }
+
+  secondsToMinutes(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    const secondsString = remainingSeconds.toFixed(0).padStart(2, '0'); // Round and format seconds
+    const timeFormatted = `${minutes}:${secondsString}`;
+    return timeFormatted;
+  }
+  
 }
