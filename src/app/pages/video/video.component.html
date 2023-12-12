@@ -1,9 +1,4 @@
-<!-- <form [formGroup]="videoForm" action="">
-    <input accept="video/mp4" (change)="capturarImagen($event)" #video required id="videos" multiple type="file" formControlName="video">
-    <button (click)="test()">a</button>
-</form> -->
-
-<!-- <div id="containa" class="container">
+<div id="containa" class="container">
     <div id="time-on-mouse" class="time-on-mouse">
         <div style="display: flex; justify-content: center; align-items: center;">
             <p style="color: white;" id="text-time"></p>
@@ -27,19 +22,13 @@
         </div>
         <button mat-button [matMenuTriggerFor]="menu"><mat-icon>settings</mat-icon></button>
         <mat-menu #menu="matMenu">
-            <button (click)="changeQuality('240')" mat-menu-item>240p</button>
-            <button (click)="changeQuality('360')" mat-menu-item>360p</button>
-            <button (click)="changeQuality('480')" mat-menu-item>480p</button>
-            <button (click)="changeQuality('720')" mat-menu-item>720p</button>
-            <button (click)="changeQuality('1080')" mat-menu-item>1080p</button>
-            <button (click)="changeQuality('2160')" mat-menu-item>4K</button>
+            <button *ngFor="let quality of qualities" (click)="changeQuality(quality)" [disabled]="disabledButton(quality)" mat-menu-item>{{quality}}</button>
         </mat-menu>
         <button (click)="fullScreen()"><mat-icon>fullscreen</mat-icon></button>
     </div>
-</div> -->
-<form class="form-upload">
-    <input class="form-row" type="text" id="name" placeholder="name">
-    <input class="form-row" type="text" id="description" placeholder="description">
-    <input class="form-row" type="file" id="myFile" name="filename" accept="video/mp4,video/x-m4v,video/*">
-    <button class="form-row" (click)="test()" type="button">Upload</button>
-</form>
+</div>
+<div class="title-desc">
+    <h1>{{name}}</h1>
+    <p>{{description}}</p>
+</div>
+<!-- <button (click)="test()"></button> -->

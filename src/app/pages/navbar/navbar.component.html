@@ -1,0 +1,50 @@
+<mat-sidenav-container class="sidenav-container">
+	<!-- <mat-sidenav #drawer class="sidenav" fixedInViewport 
+		[attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+		[mode]="(isHandset$ | async) ? 'over' : 'side'"
+		[opened]="(isHandset$ | async) === false">
+		<mat-toolbar style="background: #3f51b5; display: flex; justify-content: center;" class="mat-elevation-z2">
+			<img class="align-text" src="assets/img/LOGO-HOME.png" alt="Logo de Club Estar Bien" style="height: 60px;">
+		</mat-toolbar>
+		<mat-accordion>
+			<div>
+				<mat-expansion-panel *ngFor="let menu of menuList">
+
+					<mat-expansion-panel-header>
+						<mat-panel-title class="sidenav-title">
+							<mat-icon class="text-blue-primary">{{menu.icon}}</mat-icon>
+							<span class="text-blue-primary">{{menu.menu}}</span>
+						</mat-panel-title>
+					</mat-expansion-panel-header>
+
+					<div *ngFor="let subMenu of menu.menuDtos; let i = index" mat-raised-button class="button-sidenav"
+						(click)="navigateMenu(subMenu.url, i);">
+						<mat-icon class="text-blue-primary">{{subMenu.icon}}</mat-icon>
+							<span class="text-blue-primary" style="margin-left: 1rem;">
+								{{subMenu.menu}}
+							</span>
+					</div>
+				</mat-expansion-panel>
+			</div>
+		</mat-accordion>
+	</mat-sidenav> -->
+	
+	<mat-sidenav-content style="background: #f4f4f4;" class="scrollCB">
+			<mat-toolbar color="primary" class="mat-elevation-z4 toolbar"  style="z-index:1000;">
+				<!-- <button
+					type="button"
+					aria-label="Toggle sidenav"
+					mat-icon-button
+					(click)="drawer.toggle()">
+					<mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+				</button> -->
+				<p class="title">Video Web</p>
+				<button mat-icon-button (click)="logout()">
+					<mat-icon>logout</mat-icon>
+				</button>
+			</mat-toolbar>
+		<div>
+			<router-outlet></router-outlet>
+		</div>
+	</mat-sidenav-content>
+</mat-sidenav-container>

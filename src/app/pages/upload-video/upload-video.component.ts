@@ -1,6 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ApiService } from 'src/app/core/services/api.service';
 
 @Component({
   selector: 'app-upload-video',
@@ -9,136 +10,49 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class UploadVideoComponent implements OnInit {
 
-  currentTime: string = "0:00";
-  endTime: string = "0:00";
-  movingBar: boolean = false;
-  playing: boolean = false;
-  fullscreen: boolean = false;
-  urlVideo: string = 'http://localhost:3000/video?quality=2160';
+  constructor(private apiService: ApiService) { }
 
-  videoForm = new FormGroup({
-    video: new FormControl(''),
-  });
+  ngOnInit(): void {}
 
-  imagenbase64: string | undefined = undefined;
+  test(){
+    const inputFile = document.getElementById('myFile') as HTMLInputElement;
+    const name = document.getElementById('name') as HTMLInputElement;
+    const description = document.getElementById('description') as HTMLInputElement;
+    if (inputFile.files && inputFile.files.length > 0) {
+      const file = inputFile.files[0];
+      this.getBase64(file).then(
+        (base64) => {
+          let data = {
+            base64,
+            name: name.value,
+            description: description.value,
+          };
+          this.apiService.call(data, 'uploadVideo', 'POST').subscribe(
+            (response) => {
+              console.log(response);
+            },
+            (error) => {
+              console.log(error);
+            }
+          );
+        },
+        (error) => {
 
-  constructor(private sanitizer: DomSanitizer) { }
-
-  ngOnInit(): void {
-    let videoPlayer: HTMLVideoElement = document.getElementById('videoPlayer') as HTMLVideoElement;
-    videoPlayer.addEventListener("timeupdate", () => {
-      if(videoPlayer.currentTime !== 0){
-        this.currentTime = this.secondsToMinutes(videoPlayer.currentTime);
-      }
-      if(!Number.isNaN(videoPlayer.duration)){
-        this.endTime = this.secondsToMinutes(videoPlayer.duration);
-      }
-      let curr = (videoPlayer.currentTime / videoPlayer.duration) * 100;
-      // if(video.ended){
-      //     document.querySelector(".fa-play").style.display = "block"
-      //     document.querySelector(".fa-pause").style.display = "none"
-      // }
-      if(!this.movingBar){
-        (document.getElementById('barra') as HTMLElement).style.width = `${curr}%`;
-      }
-  })
-  }
-
-  mousemoveBar(event: any){
-    this.movingBar = true;
-    let timeline: HTMLElement = document.getElementById('timeline') as HTMLElement;
-    let curr = (event.offsetX / timeline.clientWidth) * 100;
-    (document.getElementById('barra') as HTMLElement).style.width = `${curr}%`;
-    console.log(curr);
-  }
-
-  mouseleaveBar(event: any){
-    this.movingBar = false;
-    let videoPlayer: HTMLVideoElement = document.getElementById('videoPlayer') as HTMLVideoElement;
-    let curr = (videoPlayer.currentTime / videoPlayer.duration) * 100;
-    (document.getElementById('barra') as HTMLElement).style.width = `${curr}%`;
-  }
-
-  clickBar(event: any){
-    let timeline: HTMLElement = document.getElementById('timeline') as HTMLElement;
-    let videoPlayer: HTMLVideoElement = document.getElementById('videoPlayer') as HTMLVideoElement;
-    let curr = (event.offsetX / timeline.clientWidth) * 100;
-    (document.getElementById('barra') as HTMLElement).style.width = `${curr}%`;
-    videoPlayer.currentTime = (curr / 100) * videoPlayer.duration;
-  }
-
-  changeQuality(quality: string){
-    let videoPlayer: HTMLVideoElement = document.getElementById('videoPlayer') as HTMLVideoElement;
-    videoPlayer?.pause(); // Pausa el video
-    let currentTime = videoPlayer.currentTime;
-    this.urlVideo = `http://localhost:3000/video?quality=${quality}`; // Cambia la fuente del video
-    videoPlayer?.load(); // Carga la nueva fuente
-    videoPlayer?.addEventListener('loadedmetadata', () => {
-      videoPlayer.currentTime = currentTime; // Restaura la posición de reproducción
-      if(this.playing){
-        videoPlayer.play(); // Reanuda la reproducción
-      }
-    });
-  }
-
-  capturarImagen(event: any) {
-    const imagenCapturada = event.target.files[0];
-    this.extraerBase64(imagenCapturada).then((imagen: any) => {
-      this.imagenbase64 = imagen.base;
-    });
-   }
-
-  extraerBase64 = async ($event: any) =>
-    new Promise((resolve, reject) => {
-      try {
-        const unsafeImg = window.URL.createObjectURL($event);
-        const image = this.sanitizer.bypassSecurityTrustUrl(unsafeImg);
-        const reader = new FileReader();
-        reader.readAsDataURL($event);
-        reader.onload = () => {
-          resolve({
-            base: reader.result,
-          });
-        };
-        reader.onerror = (error) => {
-          resolve({
-            base: null,
-          });
-        };
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  );
-
-  playVideo(){
-    let videoPlayer: HTMLVideoElement = document.getElementById('videoPlayer') as HTMLVideoElement;
-    if(videoPlayer.paused){
-      this.playing = true;
-      videoPlayer.play();
-    } else {
-      this.playing = false;
-      videoPlayer.pause();
+        }
+      );
     }
   }
 
-  fullScreen(){
-    let containa: HTMLElement = document.getElementById('containa') as HTMLElement;
-    if(this.fullscreen){
-      this.fullscreen = false;
-      document.exitFullscreen();
-    } else {
-      this.fullscreen = true;
-      containa.requestFullscreen();
-    }
+  getBase64(file: any){
+    return new Promise((resolve, reject) => {
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = function () {
+        resolve(reader.result);
+      };
+      reader.onerror = function (error) {
+        reject();
+      };
+    })
   }
-
-  secondsToMinutes(seconds: number): string {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    const secondsString = remainingSeconds.toFixed(0).padStart(2, '0'); // Round and format seconds
-    const timeFormatted = `${minutes}:${secondsString}`;
-    return timeFormatted;
-  }
-  
 }
